@@ -1,3 +1,31 @@
+<form action="/new" method="get" data-turbo="false">
+  <input type="submit" value="Consonant">
+  <%= hidden_field_tag :consonant, true %>
+  <%= hidden_field_tag :letters, @letters %>
+</form>
+<form action="/new" method="get" data-turbo="false">
+  <input type="submit" value="Vowel">
+  <%= hidden_field_tag :vowel, true %>
+  <%= hidden_field_tag :letters, @letters %>
+</form>
+
+<ul>
+  <% @letters.each do |letter| %>
+    <li><%= letter %></li>
+  <% end %>
+</ul>
+<form action="/score" method="post" data-turbo="false">
+  <input type="text" name="word">
+  <% if @letters.length == 9 %>
+    <input type="submit" value="Go">
+  <% end %>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <%= hidden_field_tag :letters, @letters %>
+</form>
+
+<%= link_to "Reset", new_path %>
+
+<!--
 <ul>
   <% @letters.each do |letter| %>
     <li><%= letter %></li>
@@ -9,3 +37,4 @@
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
   <%= hidden_field_tag :letters, @letters %>
 </form>
+-->
