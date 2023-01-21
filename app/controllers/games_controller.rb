@@ -3,24 +3,32 @@ require 'open-uri'
 
 class GamesController < ApplicationController
   def new
+    # return if request.referer == request.url.chop.chop
+    @x = request.referer
+    @y = request.url.chop.chop
+
     @letters = params[:letters] ? params[:letters].split : []
 
-    return unless @letters.length < 9
+    # return if request.refer == request.url.chop.chop && params[:letters].empty?
 
-    @letters << %w[A E I O U].sample if params[:vowel]
-    @letters << %w[B C D F G H J K L M N P Q R S T V W X Y Z].sample if params[:consonant]
-    # end
+    return unless @letters.length < 9
+    # return unless @letters.length > 0
+
+
+    @letters << %w[A E I O U].sample if params[:vowel] # && @letters.length < 9 #
+    @letters << %w[B C D F G H J K L M N P Q R S T V W X Y Z].sample if params[:consonant] # && @letters.length < 9 #
+    # return if session[:letters] == @letters
+    # session[:letters] = @letters
   end
 
   def score
-    @word = params[:word].upcase
-    @letters = params[:letters].upcase
+    return unless params[:word]
 
-    if valid?(@letters.split, @word)
-      @result = word_check(@word)
-      @score = @result['found'] ? generate_score : "#{@word} is not a word."
+    if valid?(params[:letters].upcase.split, params[:word].upcase)
+      @result = word_check(params[:word].upcase)
+      session[:score] = @result['found'] ? generate_score : "#{params[:word].upcase} is not a word."
     else
-      @score = "Invalid word - #{@word} can't be made from #{@letters}."
+      session[:score] = "Invalid word - #{params[:word].upcase} can't be made from #{params[:letters].upcase}."
     end
   end
 
@@ -43,7 +51,7 @@ class GamesController < ApplicationController
     JSON.parse(user_serialized)
   end
 
-  def generate_score()
+  def generate_score
     "#{@result['word'].upcase} is worth #{@result['length']} points"
   end
 end
